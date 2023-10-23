@@ -32,18 +32,33 @@ public class UserTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {3, 4, -5, -6, 9})
-    public void testAddCredit(float amount) throws InvalidCreditRange {
-        if(amount < 0) {
-            // asserthrow (user.addCredit(amount), ...)
+    @ValueSource(floats = {3, 4, 5, 6, 9})
+    public void testwithValueSource(float argument){
+        assertEquals(argument+user.GetCredit(),user.addCredit(argument))
+    }
+
+    @ParameterizedTest
+    @ValueSource(floats = {3, 4, -5, -6, 9})
+    public void testwithNegValueSource(float argument){
+        if ( argument < 0 ){
+            assertThrow(InvalidCreditRange(),user.addCredit(argument))
         }
     }
+
+//    public void testAddCredit(float amount) throws InvalidCreditRange {
+//        if(amount < 0) {
+//            // asserthrow (user.addCredit(amount), ...)
+//        }
+//    }
 
 
 
     @Test
     void testForAddNegativeAmount() {
-
+        assertEquals(10+ user.GetCredit(),user.addCredit(10));
+        assertEquals(5 + user.GetCredit(),user.addCredit(5));
+        assertThrow(InvalidCreditRange(),user.addCredit(-5));
+        
     }
 
     @AfterEach
