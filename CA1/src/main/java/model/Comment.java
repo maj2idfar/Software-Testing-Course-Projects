@@ -53,5 +53,4 @@ public class Comment {
                 this.dislike += 1;
         }
     }
-
 }
