@@ -124,12 +124,11 @@ public class CommodityTest {
     }
 
     @Test
-    public void RatingTest() {
-        // addRate('user1', 30)
-        // addRate('user2', 30)
-        // addRate('user3', 30)
-        // addRate('user2', 40)
-
-        // assertEquals(dasti, getRating)
+    public void SomeoneChangesTheirRateRatingTest() {
+        commodity.addRate("user1",30);
+        commodity.addRate("user2",9);
+        commodity.addRate("user3",21);
+        commodity.addRate("user2",15);
+        assertEquals(16.5,commodity.getRating());
     }
 }
