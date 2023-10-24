@@ -1,10 +1,13 @@
 package model;
+import exceptions.CommodityIsNotInBuyList;
 import exceptions.InvalidCreditRange;
 //import org.junit.jupiter.api.Test;
 //import org.junit.jupiter.api.runners;
 //import org.junit.runners.Parameterized;
 //import org.junit.runners.Parameterized.Parameters;
 import static org.junit.jupiter.api.Assertions.*;
+
+import exceptions.NotInStock;
 import org.junit.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,24 +20,34 @@ public class UserTest {
 //    @Test
 //    public float amount , credit;
 
-//    public UserTest();
-
     private User user;
-
-    @BeforeAll
-    static void initAll(){
-
-    }
 
     @BeforeEach
     void init() {
         user = new User("testUser", "password", "test@example.com", "2000-01-01", "123 Main St");
     }
 
+    @Test
+    void AddNegativeCreditTest() {
+        assertDoesNotThrow(() -> {
+            user.addCredit(10);
+        });
+        assertEquals(10, user.getCredit());
+        assertDoesNotThrow(() -> {
+            user.addCredit(5);
+        });
+        assertEquals(15, user.getCredit());
+        assertThrows(InvalidCreditRange.class, () -> {
+            user.addCredit(-5);
+        });
+        assertEquals(15, user.getCredit());
+    }
+
     @ParameterizedTest
     @ValueSource(floats = {3, 4, 5, 6, 9})
     public void testwithValueSource(float argument){
-        assertEquals(argument+user.GetCredit(),user.addCredit(argument))
+        user.addCredit(argument)
+        assertEquals(argument+user.getCredit(),user.addCredit(argument))
     }
 
     @ParameterizedTest
@@ -65,7 +78,7 @@ public class UserTest {
     }
 
 
-    @test
+    @Test
     public void testAddAndWithdraw(){
         assertEquals(user.GetCredit()+10 , user.addCredit(10));
         assertEquals(user.GetCredit()-8,user.withdrawCredit(8));
@@ -75,50 +88,139 @@ public class UserTest {
 
     }
 
-    @test
-    public void testAddbuyItem(){
-        Map<String, Integer> the_buylist = new HashMap<>();
-        com1 = new Commodity();
-        assertEquals(the_buylist.put(com1.id,1),user.addBuyItem(com1));
-        com2 = new Commodity();
-        assertEquals(the_buylist.put(com2.id,1),user.addBuyItem(com2));
-        assertEquals(the_buylist.put(com1.id,2),user.addBuyItem(com1));
-        assertEquals(the_buylist.put(com1.id,3),user.addBuyItem(com1));
-        com3 = new Commodity();
-        assertEquals(the_buylist.put(com3.id,1),user.addBuyItem(com3));
+    @Test
+    public void AddBuyItemTest(){
+        Commodity com1 = new Commodity(); com1.setId("1");
+        Commodity com2 = new Commodity(); com2.setId("2");
+        Commodity com3 = new Commodity(); com3.setId("3");
+
+        user.addBuyItem(com1);
+        assertEquals(1,user.getBuyList().get(com1));
+        user.addBuyItem(com2);
+        assertEquals(1,user.getBuyList().get(com2));
+        user.addBuyItem(com1);
+        assertEquals(2,user.getBuyList().get(com1));
+        user.addBuyItem(com1);
+        assertEquals(3,user.getBuyList().get(com1));
+        user.addBuyItem(com2);
+        assertEquals(2,user.getBuyList().get(com2));
+        user.addBuyItem(com3);
+        assertEquals(1,user.getBuyList().get(com3));
+        assertEquals(3,user.getBuyList().get(com1));
     }
 
-    @test
-    public void testAddPurchasedItem(){
-        Map<String, Integer> the_purchasedlist = new HashMap<>();
-        com1 = new Commodity();
-        assertEquals(the_buylist.put(com1.id,1),user.addBuyItem(com1));
-        com2 = new Commodity();
-        assertEquals(the_buylist.put(com2.id,1),user.addBuyItem(com2));
-        assertEquals(the_buylist.put(com1.id,2),user.addBuyItem(com1));
-        assertEquals(the_buylist.put(com1.id,3),user.addBuyItem(com1));
-        com3 = new Commodity();
-        assertEquals(the_buylist.put(com3.id,1),user.addBuyItem(com3));
-    }
-    @test
-    public void testremoveItemFromBuyList(){
-        Map<String, Integer> the_buylist = new HashMap<>();
-        the_buylist= user.GetBuyList();
-        com1 = new Commodity();
-        int id1 = com1.getId();
-        if(the_buylist.containsKey(id1)){
-            int q1 = the_buylist.get(id1);
-            if ( q1 == 1)
-                assertEquals(the_buylist.remove(id1),user.removeItemFromBuyList(com1));
-            else
-                assertEquals(the_buylist.put(id1,q1-1),user.removeItemFromBuyList(com1));
+    @Test
+    public void AddPurchasedItemWithPositiveQuantityTest(){
+        String com1 = "1";
+        String com2 = "2";
+        String com3 = "3";
 
-        }
-        else
-            assertThrow(CommodityIsNotInBuyList,user.removeItemFromBuyList(com1))
-        the_buylist.remove();
-
+        user.addPurchasedItem(com1, 5);
+        assertEquals(5,user.getPurchasedList().get(com1));
+        user.addPurchasedItem(com2, 10);
+        assertEquals(10,user.getPurchasedList().get(com2));
+        user.addPurchasedItem(com1, 5);
+        assertEquals(10,user.getPurchasedList().get(com1));
+        user.addPurchasedItem(com1, 3);
+        assertEquals(13,user.getPurchasedList().get(com1));
+        user.addPurchasedItem(com2, 7);
+        assertEquals(17,user.getPurchasedList().get(com2));
+        user.addPurchasedItem(com3, 15);
+        assertEquals(13,user.getPurchasedList().get(com1));
+        assertEquals(17,user.getPurchasedList().get(com2));
+        assertEquals(15,user.getPurchasedList().get(com3));
     }
+    @Test
+    public void AddPurchasedItemWithNegativeQuantityTest(){ // This should be considered.
+        String com1 = "1";
+        String com2 = "2";
+        String com3 = "3";
+
+        user.addPurchasedItem(com1, 5);
+        assertEquals(5,user.getPurchasedList().get(com1));
+        user.addPurchasedItem(com2, 10);
+        assertEquals(10,user.getPurchasedList().get(com2));
+        user.addPurchasedItem(com1, -5);
+        assertEquals(0,user.getPurchasedList().get(com1));
+        user.addPurchasedItem(com1, 3);
+        assertEquals(3,user.getPurchasedList().get(com1));
+        user.addPurchasedItem(com2, 7);
+        assertEquals(7,user.getPurchasedList().get(com2));
+        user.addPurchasedItem(com3, -1);
+        assertEquals(3,user.getPurchasedList().get(com1));
+        assertEquals(7,user.getPurchasedList().get(com2));
+        assertEquals(-1,user.getPurchasedList().get(com3));
+    }
+
+//    @Test
+//    public void AddPurchasedItemTest2(){
+//        Map<String, Integer> the_purchasedlist = new HashMap<>();
+//        com1 = new Commodity();
+//        assertEquals(the_buylist.put(com1.id,1),user.addBuyItem(com1));
+//        com2 = new Commodity();
+//        assertEquals(the_buylist.put(com2.id,1),user.addBuyItem(com2));
+//        assertEquals(the_buylist.put(com1.id,2),user.addBuyItem(com1));
+//        assertEquals(the_buylist.put(com1.id,3),user.addBuyItem(com1));
+//        com3 = new Commodity();
+//        assertEquals(the_buylist.put(com3.id,1),user.addBuyItem(com3));
+//    }
+    @Test
+    public void RemoveInvalidItemFromBuyListTest(){
+        Commodity com1 = new Commodity(); com1.setId("1");
+
+        assertThrows(CommodityIsNotInBuyList.class, () -> {
+            user.removeItemFromBuyList(com1);
+        });
+    }
+
+    @Test
+    public void RemoveValidItemFromBuyListTest(){
+        Commodity com1 = new Commodity(); com1.setId("1");
+
+        user.addBuyItem(com1);
+
+        assertDoesNotThrow(() -> {
+            user.removeItemFromBuyList(com1);
+        });
+    }
+
+    @Test
+    public void RemoveValidAndInvalidItemFromBuyListTest(){
+        Commodity com1 = new Commodity(); com1.setId("1");
+        Commodity com2 = new Commodity(); com2.setId("2");
+        Commodity com3 = new Commodity(); com3.setId("3");
+        Commodity com4 = new Commodity(); com4.setId("4");
+        Commodity com5 = new Commodity(); com5.setId("5");
+
+        user.addBuyItem(com1);
+        user.addBuyItem(com2);
+
+        assertDoesNotThrow(() -> {
+            user.removeItemFromBuyList(com1);
+        });
+
+        user.addBuyItem(com3);
+
+        assertDoesNotThrow(() -> {
+            user.removeItemFromBuyList(com2);
+        });
+
+        user.addBuyItem(com4);
+
+        assertThrows(CommodityIsNotInBuyList.class, () -> {
+            user.removeItemFromBuyList(com5);
+        });
+    }
+
+//    if(the_buylist.containsKey(id1)){
+//        int q1 = the_buylist.get(id1);
+//        if ( q1 == 1)
+//            assertEquals(the_buylist.remove(id1),user.removeItemFromBuyList(com1));
+//        else
+//            assertEquals(the_buylist.put(id1,q1-1),user.removeItemFromBuyList(com1));
+//
+//    }
+//        else
 
     //    public void testAddCredit(float amount) throws InvalidCreditRange {
 //        if(amount < 0) {
@@ -126,36 +228,10 @@ public class UserTest {
 //        }
 //    }
 
-
-
-    @Test
-    void testForAddNegativeAmount() {
-        assertEquals(10+ user.GetCredit(),user.addCredit(10));
-        assertEquals(5 + user.GetCredit(),user.addCredit(5));
-        assertThrow(InvalidCreditRange(),user.addCredit(-5));
-        
-    }
-
-    @AfterEach
-    void tearDown() {
-
-    }
-
-    @AfterAll
-    void tearDownAll() {
-
-    }
-
     public void testaddCredit(float a , float c){
         this.amount =a;
         this.credit= c;
         //assertThrows (InvalidCreditRange(),User.addCredit(-5))
     }
-    @ParameterizedTest
-    public static Collection<Object [] >parameters()
-    {
-       return Arrays.asList ( new )
-    }
-
 }
 
