@@ -181,6 +181,19 @@ public class UserTest {
         assertEquals(-1,user.getPurchasedList().get(com3));
     }
 
+    @ParameterizedTest
+    @CsvSource ({
+            "\"1\", 2",
+            "\"2\", 5",
+            "\"3\", 12",
+            "\"4\", 0",
+            "\"5\", -5"
+    })
+    public void AddPurchasedItemTest(String id, int quantity){ // This should be considered, because negative quantity is not logical.
+        user.addPurchasedItem(id, quantity);
+        assertEquals(quantity,user.getPurchasedList().get(id));
+    }
+
     @Test
     public void RemoveInvalidItemFromBuyListTest(){
         Commodity com1 = new Commodity(); com1.setId("1");
