@@ -36,7 +36,7 @@ public class UserTest {
     }
 
     @ParameterizedTest
-    @ValueSource(floats = {0, 5, -5, 9, -10})
+    @ValueSource(floats = {0, 5, -5, 9, -10, 12, 100, -45, -32, -98})
     public void AddCreditParameterizedTest(float amount){
         if(amount < 0) {
             assertThrows(InvalidCreditRange.class, () -> {
@@ -78,46 +78,45 @@ public class UserTest {
         }
     }
 
-//    @ParameterizedTest
-//    @ValueSource(floats = {3, 4, 5, 6, 9})
-//    @Test
-//    public void testAddWithdraw(float argument){
-//        the_credit = user.GetCredit();
-//        user.addCredit(argument);
-//        user.withdrawCredit(argument);
-//        assertEquals(the_credit,user.GetCredit());
-//
-//        assertDoesNotThrow(() -> {
-//            user.addCredit(20);
-//        });
-//        assertEquals(20,user.getCredit());
-//        assertDoesNotThrow(() -> {
-//            user.withdrawCredit(2);
-//        });
-//        assertEquals(18,user.getCredit());
-//        assertDoesNotThrow(() -> {
-//            user.withdrawCredit(4);
-//        });
-//        assertEquals(14,user.getCredit());
-//        assertDoesNotThrow(() -> {
-//            commodity.updateInStock(-6);
-//        });
-//        assertEquals(8,commodity.getInStock());
-//        assertThrows(NotInStock.class, () -> {
-//            commodity.updateInStock(-10);
-//        });
-//    }
+    @Test
+    public void testAddAndWithdraw(){
+        assertDoesNotThrow(() -> {
+            user.addCredit(20);
+        });
+        assertEquals(20,user.getCredit());
+        assertDoesNotThrow(() -> {
+            user.withdrawCredit(2);
+        });
+        assertEquals(18,user.getCredit());
+        assertDoesNotThrow(() -> {
+            user.withdrawCredit(4);
+        });
+        assertEquals(14,user.getCredit());
+        assertThrows(InvalidCreditRange.class, () -> {
+            user.addCredit(-6);
+        });
+        assertEquals(14,user.getCredit());
+        assertThrows(InsufficientCredit.class, () -> {
+            user.withdrawCredit(15);
+        });
+        assertEquals(14,user.getCredit());
+    }
 
+    @Test
+    public void AddBuyNewItemTest() {
+        Commodity com1 = new Commodity(); com1.setId("1");
+        user.addBuyItem(com1);
+        assertEquals(1,user.getBuyList().get("1"));
+    }
 
-//    @Test
-//    public void AddAndWithdrawTest(){
-//        assertEquals(user.GetCredit()+10 , user.addCredit(10));
-//        assertEquals(user.GetCredit()-8,user.withdrawCredit(8));
-//        assertEquals(user.GetCredit()+3 , user.addCredit(3));
-//        assertThrow(InsufficientCredit(),user.withdrawCredit(10));
-//        assertThrow(InvalidCreditRange(),user.addCredit(-12));
-//    }
-
+    @Test
+    public void AddBuyExistingItemTest() {
+        Commodity com1 = new Commodity(); com1.setId("1");
+        user.addBuyItem(com1);
+        assertEquals(1,user.getBuyList().get("1"));
+        user.addBuyItem(com1);
+        assertEquals(2,user.getBuyList().get("1"));
+    }
     @Test
     public void AddBuyItemTest() {
         Commodity com1 = new Commodity(); com1.setId("1");
@@ -125,18 +124,18 @@ public class UserTest {
         Commodity com3 = new Commodity(); com3.setId("3");
 
         user.addBuyItem(com1);
-        assertEquals(1,user.getBuyList().get(com1));
+        assertEquals(1,user.getBuyList().get("1"));
         user.addBuyItem(com2);
-        assertEquals(1,user.getBuyList().get(com2));
+        assertEquals(1,user.getBuyList().get("2"));
         user.addBuyItem(com1);
-        assertEquals(2,user.getBuyList().get(com1));
+        assertEquals(2,user.getBuyList().get("1"));
         user.addBuyItem(com1);
-        assertEquals(3,user.getBuyList().get(com1));
+        assertEquals(3,user.getBuyList().get("1"));
         user.addBuyItem(com2);
-        assertEquals(2,user.getBuyList().get(com2));
+        assertEquals(2,user.getBuyList().get("2"));
         user.addBuyItem(com3);
-        assertEquals(1,user.getBuyList().get(com3));
-        assertEquals(3,user.getBuyList().get(com1));
+        assertEquals(1,user.getBuyList().get("3"));
+        assertEquals(3,user.getBuyList().get("1"));
     }
 
     @Test
@@ -182,18 +181,6 @@ public class UserTest {
         assertEquals(-1,user.getPurchasedList().get(com3));
     }
 
-//    @Test
-//    public void AddPurchasedItemTest2(){
-//        Map<String, Integer> the_purchasedlist = new HashMap<>();
-//        com1 = new Commodity();
-//        assertEquals(the_buylist.put(com1.id,1),user.addBuyItem(com1));
-//        com2 = new Commodity();
-//        assertEquals(the_buylist.put(com2.id,1),user.addBuyItem(com2));
-//        assertEquals(the_buylist.put(com1.id,2),user.addBuyItem(com1));
-//        assertEquals(the_buylist.put(com1.id,3),user.addBuyItem(com1));
-//        com3 = new Commodity();
-//        assertEquals(the_buylist.put(com3.id,1),user.addBuyItem(com3));
-//    }
     @Test
     public void RemoveInvalidItemFromBuyListTest(){
         Commodity com1 = new Commodity(); com1.setId("1");
@@ -212,6 +199,21 @@ public class UserTest {
         assertDoesNotThrow(() -> {
             user.removeItemFromBuyList(com1);
         });
+    }
+
+    @Test
+    public void RemoveValidMultiItemFromBuyListTest(){
+        Commodity com1 = new Commodity(); com1.setId("1");
+
+        user.addBuyItem(com1);
+        user.addBuyItem(com1);
+        user.addBuyItem(com1);
+
+        assertDoesNotThrow(() -> {
+            user.removeItemFromBuyList(com1);
+        });
+
+        assertEquals(2, user.getBuyList().get("1"));
     }
 
     @Test
@@ -241,27 +243,5 @@ public class UserTest {
             user.removeItemFromBuyList(com5);
         });
     }
-
-//    if(the_buylist.containsKey(id1)){
-//        int q1 = the_buylist.get(id1);
-//        if ( q1 == 1)
-//            assertEquals(the_buylist.remove(id1),user.removeItemFromBuyList(com1));
-//        else
-//            assertEquals(the_buylist.put(id1,q1-1),user.removeItemFromBuyList(com1));
-//
-//    }
-//        else
-
-    //    public void testAddCredit(float amount) throws InvalidCreditRange {
-//        if(amount < 0) {
-//            // asserthrow (user.addCredit(amount), ...)
-//        }
-//    }
-
-//    public void testaddCredit(float a , float c){
-//        this.amount =a;
-//        this.credit= c;
-//        //assertThrows (InvalidCreditRange(),User.addCredit(-5))
-//    }
 }
 
