@@ -45,7 +45,82 @@ public class UserTest {
         }
     }
 
-//    public void testAddCredit(float amount) throws InvalidCreditRange {
+    @ParameterizedTest
+    @ValueSource(floats = {3, 4, -5, -6, 9})
+    public void testwithdrawValueSource(float argument){
+        if ( argument > user.GetCredit() ){
+            assertThrow(InsufficientCredit(),user.addCredit(argument))
+        }
+        else
+            assertEquals(user.GetCredit()-argument,user.withdrawCrdit(argument))
+    }
+
+    @ParameterizedTest
+    @ValueSource(floats = {3, 4, 5, 6, 9})
+    public void testAddWithdraw(float argument){
+        the_credit = user.GetCredit();
+        user.addCredit(argument);
+        user.withdrawCredit(argument);
+        assertEquals(the_credit,user.GetCredit())
+    }
+
+
+    @test
+    public void testAddAndWithdraw(){
+        assertEquals(user.GetCredit()+10 , user.addCredit(10));
+        assertEquals(user.GetCredit()-8,user.withdrawCredit(8));
+        assertEquals(user.GetCredit()+3 , user.addCredit(3));
+        assertThrow(InsufficientCredit(),user.withdrawCredit(10));
+        assertThrow(InvalidCreditRange(),user.addCredit(-12));
+
+    }
+
+    @test
+    public void testAddbuyItem(){
+        Map<String, Integer> the_buylist = new HashMap<>();
+        com1 = new Commodity();
+        assertEquals(the_buylist.put(com1.id,1),user.addBuyItem(com1));
+        com2 = new Commodity();
+        assertEquals(the_buylist.put(com2.id,1),user.addBuyItem(com2));
+        assertEquals(the_buylist.put(com1.id,2),user.addBuyItem(com1));
+        assertEquals(the_buylist.put(com1.id,3),user.addBuyItem(com1));
+        com3 = new Commodity();
+        assertEquals(the_buylist.put(com3.id,1),user.addBuyItem(com3));
+    }
+
+    @test
+    public void testAddPurchasedItem(){
+        Map<String, Integer> the_purchasedlist = new HashMap<>();
+        com1 = new Commodity();
+        assertEquals(the_buylist.put(com1.id,1),user.addBuyItem(com1));
+        com2 = new Commodity();
+        assertEquals(the_buylist.put(com2.id,1),user.addBuyItem(com2));
+        assertEquals(the_buylist.put(com1.id,2),user.addBuyItem(com1));
+        assertEquals(the_buylist.put(com1.id,3),user.addBuyItem(com1));
+        com3 = new Commodity();
+        assertEquals(the_buylist.put(com3.id,1),user.addBuyItem(com3));
+    }
+    @test
+    public void testremoveItemFromBuyList(){
+        Map<String, Integer> the_buylist = new HashMap<>();
+        the_buylist= user.GetBuyList();
+        com1 = new Commodity();
+        int id1 = com1.getId();
+        if(the_buylist.containsKey(id1)){
+            int q1 = the_buylist.get(id1);
+            if ( q1 == 1)
+                assertEquals(the_buylist.remove(id1),user.removeItemFromBuyList(com1));
+            else
+                assertEquals(the_buylist.put(id1,q1-1),user.removeItemFromBuyList(com1));
+
+        }
+        else
+            assertThrow(CommodityIsNotInBuyList,user.removeItemFromBuyList(com1))
+        the_buylist.remove();
+
+    }
+
+    //    public void testAddCredit(float amount) throws InvalidCreditRange {
 //        if(amount < 0) {
 //            // asserthrow (user.addCredit(amount), ...)
 //        }
