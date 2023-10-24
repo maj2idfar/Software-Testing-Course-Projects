@@ -16,6 +16,54 @@ public class CommentTest {
     }
 
     @Test
+    public void AddUserVoteTestInitialValues() {
+        assertEquals(0, comment.getLike());
+        assertEquals(0, comment.getDislike());
+    }
+
+    @Test
+    public void AddUserLikeTest() {
+        comment.addUserVote("user2", "like");
+
+        assertEquals(1, comment.getLike());
+        assertEquals(0, comment.getDislike());
+    }
+
+    @Test
+    public void AddUserDislikeTest() {
+        comment.addUserVote("user3", "dislike");
+
+        assertEquals(0, comment.getLike());
+        assertEquals(1, comment.getDislike());
+    }
+
+    @Test
+    public void UserChangesLikeTest() {
+        comment.addUserVote("user2", "like");
+
+        assertEquals(1, comment.getLike());
+        assertEquals(0, comment.getDislike());
+
+        comment.addUserVote("user2", "dislike");
+
+        assertEquals(0, comment.getLike());
+        assertEquals(1, comment.getDislike());
+    }
+
+    @Test
+    public void UserChangesDislikeTest() {
+        comment.addUserVote("user3", "dislike");
+
+        assertEquals(0, comment.getLike());
+        assertEquals(1, comment.getDislike());
+
+        comment.addUserVote("user3", "like");
+
+        assertEquals(1, comment.getLike());
+        assertEquals(0, comment.getDislike());
+    }
+
+    @Test
     public void OrdinaryAddUserVoteTest() {
         assertEquals(0, comment.getLike());
         assertEquals(0, comment.getDislike());
