@@ -129,4 +129,11 @@ public class CommentTest {
         assertEquals(3, comment.getLike());
         assertEquals(1, comment.getDislike());
     }
+
+//    @Test
+//    public void getCurrentDat() {
+//        String date = comment.getCurrentDate();
+//
+//
+//    }
 }
