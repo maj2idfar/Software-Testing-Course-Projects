@@ -3,16 +3,14 @@ package model;
 import static org.junit.jupiter.api.Assertions.*;
 
 import exceptions.NotInStock;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CommodityTest {
     private Commodity commodity;
 
@@ -34,6 +32,7 @@ public class CommodityTest {
         categories.add("4");
         commodity.setCategories(categories);
         commodity.setRating(8);
+        commodity.setInStock(0);
         commodity.setImage("1111111");
         commodity.setUserRate(new HashMap <String, Integer>());
         commodity.setInitRate(0);
@@ -114,12 +113,12 @@ public class CommodityTest {
     }
 
     @Test
-    public void OrdinaryRatingTest(){
+    public void OrdinaryRatingTest() {
         commodity.addRate("user1",9);
         commodity.addRate("user2",8);
-        commodity.addRate("user3",3);
+        commodity.addRate("user3",2);
         commodity.addRate("user4",1);
-        assertEquals(4.2,commodity.getRating());
+        assertEquals(4,commodity.getRating());
     }
 
     @Test
