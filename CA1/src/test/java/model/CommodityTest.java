@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import exceptions.NotInStock;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.ArrayList;
@@ -36,6 +37,29 @@ public class CommodityTest {
         commodity.setImage("1111111");
         commodity.setUserRate(new HashMap <String, Integer>());
         commodity.setInitRate(0);
+    }
+
+    @ParameterizedTest
+    @ValueSource (ints = {1, 10, 100, 1000, 10000})
+    public void PositiveUpdateInStockTest(int amount) {
+        assertDoesNotThrow(() -> {
+            commodity.updateInStock(amount);
+        });
+    }
+
+    @ParameterizedTest
+    @ValueSource (ints = {-1, -10, -100, -1000, -10000})
+    public void NegativeUpdateInStockTest(int amount) {
+        assertThrows(NotInStock.class, () -> {
+            commodity.updateInStock(amount);
+        });
+    }
+
+    @Test
+    public void ZeroUpdateInStockTest() {
+        assertDoesNotThrow(() -> {
+            commodity.updateInStock(0);
+        });
     }
 
     @Test
@@ -110,6 +134,34 @@ public class CommodityTest {
             commodity.updateInStock(-8);
         });
         assertEquals(0,commodity.getInStock());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "\"user1\", 9",
+            "\"user2\", 10",
+            "\"user3\", 0",
+            "\"user4\", -5",
+            "\"user5\", -6",
+    })
+    public void addRateTest(String user_name, int score) {
+        commodity.addRate(user_name,score);
+        assertEquals((float)((float)score)/2,commodity.getRating());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "\"user1\", 9, 10",
+            "\"user2\", 10, 4",
+            "\"user3\", 0, 5",
+            "\"user4\", -5, 12",
+            "\"user5\", -6, -8",
+    })
+    public void ChangeRateTest(String user_name, int score1, int score2) {
+        commodity.addRate(user_name,score1);
+        assertEquals((float)((float)score1)/2,commodity.getRating());
+        commodity.addRate(user_name, score2);
+        assertEquals((float)((float)score2)/2,commodity.getRating());
     }
 
     @Test
