@@ -18,50 +18,68 @@ public class CommentTest {
     }
 
     @Test
-    public void testAddUserVote() {
-        // Initially, like and dislike should be 0
+    public void OrdinaryAddUserVoteTest() {
         assertEquals(0, comment.getLike());
         assertEquals(0, comment.getDislike());
 
-        // Add a 'like' vote
         comment.addUserVote("user2", "like");
 
-        // Verify that 'like' count is updated to 1
         assertEquals(1, comment.getLike());
         assertEquals(0, comment.getDislike());
 
-        // Add a 'dislike' vote
         comment.addUserVote("user3", "dislike");
 
-        // Verify that 'dislike' count is updated to 1
         assertEquals(1, comment.getLike());
         assertEquals(1, comment.getDislike());
 
-        // Add another 'like' vote
         comment.addUserVote("user4", "like");
 
-        // Verify that 'like' count is updated to 2
         assertEquals(2, comment.getLike());
         assertEquals(1, comment.getDislike());
 
-        // Someone (user2) changes their vote (like to dislike)
+        comment.addUserVote("user1", "like");
+
+        assertEquals(3, comment.getLike());
+        assertEquals(1, comment.getDislike());
+
+        comment.addUserVote("user5", "dislike");
+
+        assertEquals(3, comment.getLike());
+        assertEquals(2, comment.getDislike());
+    }
+
+    @Test
+    public void SomeoneChangesTheirVoteAddUserVoteTest() {
+        assertEquals(0, comment.getLike());
+        assertEquals(0, comment.getDislike());
+
+        comment.addUserVote("user2", "like");
+
+        assertEquals(1, comment.getLike());
+        assertEquals(0, comment.getDislike());
+
+        comment.addUserVote("user3", "dislike");
+
+        assertEquals(1, comment.getLike());
+        assertEquals(1, comment.getDislike());
+
+        comment.addUserVote("user4", "like");
+
+        assertEquals(2, comment.getLike());
+        assertEquals(1, comment.getDislike());
+
         comment.addUserVote("user2", "dislike");
 
-        // Verify that 'like' count is updated to 2
         assertEquals(1, comment.getLike());
         assertEquals(2, comment.getDislike());
 
-        // Someone (user3) changes their vote (dislike to like)
         comment.addUserVote("user3", "like");
 
-        // Verify that 'like' count is updated to 2
         assertEquals(2, comment.getLike());
         assertEquals(1, comment.getDislike());
 
-        // Add another 'like' vote
         comment.addUserVote("user1", "like");
 
-        // Verify that 'like' count is updated to 2
         assertEquals(3, comment.getLike());
         assertEquals(1, comment.getDislike());
     }
