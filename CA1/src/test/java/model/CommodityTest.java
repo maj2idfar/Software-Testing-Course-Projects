@@ -2,6 +2,7 @@ package model;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import exceptions.NotInStock;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,64 +11,120 @@ import org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class CommodityTest {
     private Commodity commodity;
 
     @BeforeAll
     public void initAll() {
-        comd = new Commodity();
+        commodity = new Commodity();
     }
 
     @BeforeEach
     public void initEach() {
-        comd.SetId("1");
-        comd.SetName("the_comd");
-        comd.SetProviderId("123");
-        comd.SetPrice(1000);
-        comd.SetCategories(ArrayList<>(1,2,3,4))
-        comd.SetRating(8);
-        comd.SetImage("1111111");
-        comd.SetUserRate(HashMap<M>());
-        comd.SetInitRate(0);
-
+        commodity.setId("1");
+        commodity.setName("the_comd");
+        commodity.setProviderId("123");
+        commodity.setPrice(1000);
+        ArrayList<String> categories = new ArrayList<>();
+        categories.add("1");
+        categories.add("2");
+        categories.add("3");
+        categories.add("4");
+        commodity.setCategories(categories);
+        commodity.setRating(8);
+        commodity.setImage("1111111");
+        commodity.setUserRate(new HashMap <String, Integer>());
+        commodity.setInitRate(0);
     }
 
     @Test
-    public void OrdinaryupdateInStockTest() {
-        assertEquals(10,comd.updateInStock(10));
-        assertEquals(18,comd.updateInStock(8));
-        assertEquals(12,comd.updateInStock(-6));
-        assertEquals(15,comd.updateInStock(3));
-        assertEquals(10,comd.updateInStock(-5));
-        assertEquals(5,comd.updateInStock(-5));
+    public void OrdinaryUpdateInStockTest() {
+        assertDoesNotThrow(() -> {
+            commodity.updateInStock(10);
+        });
+        assertEquals(10,commodity.getInStock());
+        assertDoesNotThrow(() -> {
+            commodity.updateInStock(8);
+        });
+        assertEquals(18,commodity.getInStock());
+        assertDoesNotThrow(() -> {
+            commodity.updateInStock(-6);
+        });
+        assertEquals(12,commodity.getInStock());
+        assertDoesNotThrow(() -> {
+            commodity.updateInStock(3);
+        });
+        assertEquals(15,commodity.getInStock());
+        assertDoesNotThrow(() -> {
+            commodity.updateInStock(-5);
+        });
+        assertEquals(10,commodity.getInStock());
+        assertDoesNotThrow(() -> {
+            commodity.updateInStock(-5);
+        });
+        assertEquals(5,commodity.getInStock());
+    }
+    @Test
+    public void NegValueUpdateInStockTest() {
+        assertDoesNotThrow(() -> {
+            commodity.updateInStock(20);
+        });
+        assertEquals(20,commodity.getInStock());
+        assertDoesNotThrow(() -> {
+            commodity.updateInStock(-2);
+        });
+        assertEquals(18,commodity.getInStock());
+        assertDoesNotThrow(() -> {
+            commodity.updateInStock(-4);
+        });
+        assertEquals(14,commodity.getInStock());
+        assertDoesNotThrow(() -> {
+            commodity.updateInStock(-6);
+        });
+        assertEquals(8,commodity.getInStock());
+        assertThrows(NotInStock.class, () -> {
+            commodity.updateInStock(-10);
+        });
     }
 
-    public void NegValupdateInStockTest() {
-        assertEquals(20,comd.updateInStock(20));
-        assertEquals(18,comd.updateInStock(-2));
-        assertEquals(14,comd.updateInStock(-4));
-        assertEquals(8,comd.updateInStock(-6));
-        assertThrow(new NotInStock,comd.updateInStock(-10));
-    }
-
+    @Test
     public void ZeroValueInStockTest(){
-        assertEquals(20,comd.updateInStock(20));
-        assertEquals(18,comd.updateInStock(-2));
-        assertEquals(14,comd.updateInStock(-4));
-        assertEquals(8,comd.updateInStock(-6));
-        assertEquals(0,comd.updateInStock(-8));
-    }
-
-    public void ratingTest(){
-        comd.addRate("user1",9);
-        comd.addRate("user2",8.5);
-        comd.addRate("user3",3);
-        comd.addRate("user4",1);
-        assertEquals(4.3,comd.calcRating())
+        assertDoesNotThrow(() -> {
+            commodity.updateInStock(20);
+        });
+        assertEquals(20,commodity.getInStock());
+        assertDoesNotThrow(() -> {
+            commodity.updateInStock(-2);
+        });
+        assertEquals(18,commodity.getInStock());
+        assertDoesNotThrow(() -> {
+            commodity.updateInStock(-4);
+        });
+        assertEquals(14,commodity.getInStock());
+        assertDoesNotThrow(() -> {
+            commodity.updateInStock(-6);
+        });
+        assertEquals(8,commodity.getInStock());
+        assertDoesNotThrow(() -> {
+            commodity.updateInStock(-8);
+        });
+        assertEquals(0,commodity.getInStock());
     }
 
     @Test
-    public void addRateTest() {
+    public void OrdinaryRatingTest(){
+        commodity.addRate("user1",9);
+        commodity.addRate("user2",8);
+        commodity.addRate("user3",3);
+        commodity.addRate("user4",1);
+        assertEquals(4.2,commodity.getRating());
+    }
+
+    @Test
+    public void RatingTest() {
         // addRate('user1', 30)
         // addRate('user2', 30)
         // addRate('user3', 30)
