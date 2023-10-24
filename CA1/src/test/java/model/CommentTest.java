@@ -6,6 +6,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class CommentTest {
 
     private Comment comment;
@@ -130,10 +133,15 @@ public class CommentTest {
         assertEquals(1, comment.getDislike());
     }
 
-//    @Test
-//    public void getCurrentDat() {
-//        String date = comment.getCurrentDate();
-//
-//
-//    }
+    @Test
+    public void getCurrentDate() {
+        String date = comment.getCurrentDate();
+
+        String pattern = "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}";
+
+        Pattern regex = Pattern.compile(pattern);
+        Matcher matcher = regex.matcher(date);
+
+        assertEquals(true, matcher.matches());
+    }
 }
