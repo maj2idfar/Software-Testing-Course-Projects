@@ -55,10 +55,9 @@ public class CommentControllerTest {
         Map<String, String> input = new HashMap<>();
         input.put("username", "user");
 
-        NotExistentComment error = new NotExistentComment();
-
         when(baloot.getCommentById(anyInt())).thenThrow(notExistentCommentError);
         doNothing().when(comment).addUserVote(anyString(), eq("like"));
+        when(notExistentCommentError.getMessage()).thenReturn("Comment not found!");
 
         ResponseEntity<String> response = commentController.likeComment("1", input);
 
@@ -97,6 +96,7 @@ public class CommentControllerTest {
 
         when(baloot.getCommentById(anyInt())).thenThrow(notExistentCommentError);
         doNothing().when(comment).addUserVote(anyString(), eq("dislike"));
+        when(notExistentCommentError.getMessage()).thenReturn("Comment not found!");
 
         ResponseEntity<String> response = commentController.dislikeComment("1", input);
 
