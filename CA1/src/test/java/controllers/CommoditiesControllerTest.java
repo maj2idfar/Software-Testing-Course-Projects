@@ -2,7 +2,10 @@ package controllers;
 
 import exceptions.NotExistentComment;
 import exceptions.NotExistentCommodity;
+import exceptions.NotExistentUser;
+import model.Comment;
 import model.Commodity;
+import model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -24,6 +27,7 @@ import static org.mockito.Mockito.*;
 public class CommoditiesControllerTest {
     @Mock private Baloot baloot;
     @Mock private Commodity commodity;
+    @Mock private User user;
     @Mock private NotExistentCommodity notExistentCommodity;
     @Mock private NumberFormatException numberFormatException;
 
@@ -129,5 +133,57 @@ public class CommoditiesControllerTest {
 
         verify(baloot, times(1)).getCommodityById("1");
         verify(commodity, times(1)).addRate("user", 10);
+    }
+
+    @Test
+    public void addCommentForExistingCommodity() throws NotExistentUser {
+        user = mock(User.class);
+
+        when(baloot.generateCommentId()).thenReturn(1);
+        when(baloot.getUserById(anyString())).thenReturn(user);
+        when(user.getEmail()).thenReturn("user@test.com");
+        when(user.getUsername()).thenReturn("user");
+        doNothing().when(baloot).addComment(isA(Comment.class));
+
+        Map<String, String> input = new HashMap<>();
+        input.put("username", "user");
+        input.put("comment", "This is a test comment!");
+
+        ResponseEntity<String> response = commoditiesController.addCommodityComment("1", input);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("comment added successfully!", response.getBody());
+
+        verify(baloot, times(1)).generateCommentId();
+        verify(baloot, times(1)).getUserById("user");
+        verify(user, times(1)).getEmail();
+        verify(user, times(1)).getUsername();
+        verify(baloot, times(1)).addComment(isA(Comment.class));
+    }
+
+    @Test
+    public void addCommentForInvalidCommodity() throws NotExistentUser {
+        user = mock(User.class);
+
+        when(baloot.generateCommentId()).thenReturn(1);
+        when(baloot.getUserById(anyString())).thenThrow(new NotExistentUser());
+        when(user.getEmail()).thenReturn("user@test.com");
+        when(user.getUsername()).thenReturn("user");
+        doNothing().when(baloot).addComment(isA(Comment.class));
+
+        Map<String, String> input = new HashMap<>();
+        input.put("username", "user");
+        input.put("comment", "This is a test comment!");
+
+        ResponseEntity<String> response = commoditiesController.addCommodityComment("1", input);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("comment added successfully!", response.getBody());
+
+        verify(baloot, times(1)).generateCommentId();
+        verify(baloot, times(1)).getUserById("user");
+        verify(user, times(1)).getEmail();
+        verify(user, times(1)).getUsername();
+        verify(baloot, times(1)).addComment(isA(Comment.class));
     }
 }
