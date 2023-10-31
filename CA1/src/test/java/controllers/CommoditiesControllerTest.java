@@ -196,7 +196,7 @@ public class CommoditiesControllerTest {
         verify(user, never()).getUsername();
         verify(baloot, never()).addComment(isA(Comment.class));
     }
-
+    
     @Test
     public void getCommodityCommentTest() {
         ArrayList<Comment> returnValue = new ArrayList<>();
