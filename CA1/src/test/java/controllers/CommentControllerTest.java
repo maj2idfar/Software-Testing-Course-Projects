@@ -65,7 +65,7 @@ public class CommentControllerTest {
         assertEquals(notExistentCommentError.getMessage(), response.getBody());
 
         verify(baloot, times(1)).getCommentById(1);
-//        verify(comment, times(0));
+        verify(comment, never()).addUserVote(anyString(), anyString());
     }
 
     @Test
@@ -104,6 +104,6 @@ public class CommentControllerTest {
         assertEquals(notExistentCommentError.getMessage(), response.getBody());
 
         verify(baloot, times(1)).getCommentById(1);
-//        verify(comment, times(0));
+        verify(comment, never()).addUserVote(anyString(), anyString());
     }
 }
