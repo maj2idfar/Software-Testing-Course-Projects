@@ -197,6 +197,7 @@ public class CommoditiesControllerTest {
         verify(baloot, never()).addComment(isA(Comment.class));
     }
 
+<<<<<<< HEAD
     @Test
     public void getCommodityCommentTest() {
         ArrayList<Comment> returnValue = new ArrayList<>();
@@ -209,6 +210,9 @@ public class CommoditiesControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(returnValue, response.getBody());
     }
+=======
+    // getCommodityComment
+>>>>>>> 54fed2260e8cdbf99ae5fa2907431f6fd6fd7cea
 
     @Test
     public void searchCommoditiesByName() {
