@@ -58,15 +58,31 @@ public class CommoditiesController {
         String commentText = input.get("comment");
 
         User user = null;
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//        Fixed Version:
+
         try {
             user = baloot.getUserById(username);
-        } catch (NotExistentUser ignored) {
+
+            Comment comment = new Comment(commentId, user.getEmail(), user.getUsername(), Integer.parseInt(id), commentText);
+            baloot.addComment(comment);
+
+            return new ResponseEntity<>("comment added successfully!", HttpStatus.OK);
+        } catch (NotExistentUser error) {
+            return new ResponseEntity<>(error.getMessage(), HttpStatus.BAD_REQUEST);
         }
-
-        Comment comment = new Comment(commentId, user.getEmail(), user.getUsername(), Integer.parseInt(id), commentText);
-        baloot.addComment(comment);
-
-        return new ResponseEntity<>("comment added successfully!", HttpStatus.OK);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//        Incorrect Version:\
+//
+//        try {
+//            user = baloot.getUserById(username);
+//        } catch (NotExistentUser ignored) {
+//        }
+//
+//        Comment comment = new Comment(commentId, user.getEmail(), user.getUsername(), Integer.parseInt(id), commentText);
+//        baloot.addComment(comment);
+//
+//        return new ResponseEntity<>("comment added successfully!", HttpStatus.OK);
     }
 
     @GetMapping(value = "/commodities/{id}/comment")
