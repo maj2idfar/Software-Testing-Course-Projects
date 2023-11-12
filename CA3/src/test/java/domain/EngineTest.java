@@ -1,6 +1,7 @@
 package domain;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,14 +16,14 @@ public class EngineTest {
     }
 
     @Test
-    public void testGetAverageOrderQuantityByCustomerEmpty(){
+    public void testGetAverageOrderQuantityByCustomer_emptyOrderHistory(){
         engine = new Engine();
         int i =5;
         assertEquals(0,engine.getAverageOrderQuantityByCustomer(5));
     }
 
     @Test
-    public void testGetAverageOrderQuantityByCustomerNonEmpty(){
+    public void testGetAverageOrderQuantityByCustomer_nonEmptyOrderHistory(){
         engine = new Engine();
         int i = 4;
 
@@ -66,13 +67,13 @@ public class EngineTest {
     }
 
     @Test
-    public void testGetQuantityPatternByPrice1() {
+    public void testGetQuantityPatternByPrice_emptyOrderList() {
         engine = new Engine();
         assertEquals(0, engine.getQuantityPatternByPrice(200));
     }
 
     @Test
-    public void testGetQuantityPatternByPrice2() {
+    public void testGetQuantityPatternByPrice_regularPattern_differentIDs() {
         engine = new Engine();
 
         Order O1 = new Order();
@@ -101,7 +102,7 @@ public class EngineTest {
     }
 
     @Test
-    public void testGetQuantityPatternByPrice3() {
+    public void testGetQuantityPatternByPrice_regularPattern_repeatedIDs() {
         engine = new Engine();
 
         Order O1 = new Order();
@@ -130,7 +131,7 @@ public class EngineTest {
     }
 
     @Test
-    public void testGetQuantityPatternByPrice4() {
+    public void testGetQuantityPatternByPrice_regularPattern_differentPrices() {
         engine = new Engine();
 
         Order O1 = new Order();
@@ -159,7 +160,7 @@ public class EngineTest {
     }
 
     @Test
-    public void testGetQuantityPatternByPrice5() {
+    public void testGetQuantityPatternByPrice_IrregularPattern() {
         engine = new Engine();
 
         Order O1 = new Order();
@@ -187,7 +188,8 @@ public class EngineTest {
         assertEquals(0, engine.getQuantityPatternByPrice(200));
     }
 
-    public void testGetCustomerFraudulentQuantityEmptyOrder(){
+    @Test
+    public void testGetCustomerFraudulentQuantity_EmptyOrderHistory(){
         engine = new Engine();
         int i = 3;
         Order O6 = new Order();
@@ -198,7 +200,8 @@ public class EngineTest {
 
         assertEquals(12,engine.getCustomerFraudulentQuantity(O6));
     }
-    public void testGetCustomerFraudulentQuantityEmptyNonOrder1(){
+    @Test
+    public void testGetCustomerFraudulentQuantity_NonEmptyOrderHistory_quantityGreaterThanAverage(){
         engine = new Engine();
 
         int i = 4;
@@ -248,8 +251,9 @@ public class EngineTest {
         assertEquals(4,engine.getCustomerFraudulentQuantity(O6));
 
     }
+    @Test
 
-    public void testGetCustomerFraudulentQuantityEmptyNonOrder2(){
+    public void testGetCustomerFraudulentQuantity_NonEmptyOrderHistory_quantityLessThanAverage(){
         engine = new Engine();
 
         int i = 3;
@@ -300,14 +304,14 @@ public class EngineTest {
     }
 
     @Test
-    public void testAddOrderAndGetFraudulentQuantity1() {
+    public void testAddOrderAndGetFraudulentQuantity_EmptyOrderHistory() {
         engine = new Engine();
         Order o = new Order();
         assertEquals(0, engine.addOrderAndGetFraudulentQuantity(o));
     }
 
     @Test
-    public void testAddOrderAndGetFraudulentQuantity2() {
+    public void testAddOrderAndGetFraudulentQuantity_NonEmptyOrderHistory_ExistingOrder() {
         engine = new Engine();
 
         Order O1 = new Order();
@@ -331,7 +335,7 @@ public class EngineTest {
     }
 
     @Test
-    public void testAddOrderAndGetFraudulentQuantity3() {
+    public void testAddOrderAndGetFraudulentQuantity_NonEmptyOrderHistory_NonExistingOrder_QuantityZero() {
         engine = new Engine();
 
         int i = 4;
