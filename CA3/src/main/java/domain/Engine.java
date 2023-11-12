@@ -25,6 +25,12 @@ public class Engine {
             return 0;
         }
 
+        // added //////////////////
+        // else if(count == 0) {
+        //    return 0;
+        // }
+        ///////////////////////////
+
         return sum / count;
     }
 
