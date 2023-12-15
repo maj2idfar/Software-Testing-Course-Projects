@@ -20,8 +20,9 @@ jobs:
         cache: maven
         
     - name: Build
-      run: mvn clean install --file ./CA1-2-4/pom.xml
-           mvn clean install --file ./CA3/pom.xml
+      run: |
+           mvn clean install --file ./CA1-2-4/pom.xml &&
+           mvn clean install --file ./CA3/pom.xml &&
            mvn clean install --file ./CA5/pom.xml
             
     - name: Run tests for CA1-2-4
