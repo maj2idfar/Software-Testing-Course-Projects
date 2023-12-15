@@ -21,8 +21,8 @@ jobs:
         
     - name: Build and Test
       # run: mvn -B package --file ./CA5/pom.xml
-      run: mvn clean install test --file ./CA5/pom.xml
+      run: mvn clean install 
             
-    # - name: Test  
-    #   # run: mvn -B test --file ./CA5/pom.xml
-    #   run: mvn test
+    - name: Test  
+      # run: mvn -B test --file ./CA5/pom.xml
+      run: mvn test --file ./CA5/pom.xml
