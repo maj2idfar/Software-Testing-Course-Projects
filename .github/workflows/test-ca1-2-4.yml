@@ -1,4 +1,4 @@
-name: main
+name: Run automated tests for CA1, CA2, CA4
 
 on:
   push:
@@ -20,9 +20,7 @@ jobs:
         cache: maven
         
     - name: Build
-      # run: mvn -B package --file ./CA5/pom.xml
-      run: mvn clean install --file ./CA5/pom.xml
+      run: mvn clean install --file ./CA1-2-4/pom.xml
             
     - name: Test  
-      # run: mvn -B test --file ./CA5/pom.xml
-      run: mvn test --file ./CA5/pom.xml
+      run: mvn test --file ./CA1-2-4/pom.xml
